@@ -4,4 +4,5 @@ def foo():
     for i in range(100):
         print(f"foo:{i}")
 
-foo()
+print("hallo")
+
