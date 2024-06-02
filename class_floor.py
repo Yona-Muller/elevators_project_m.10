@@ -4,7 +4,7 @@ black = (0, 0, 0)
 
 
 class Floor:
-    def __init__(self, floor_num=None) -> None:
+    def __init__(self, floor_num = None) -> None:
         self.__floor_num = floor_num
         self.__button = None
         self.__color_button = (20, 20, 20)
@@ -21,7 +21,7 @@ class Floor:
     def get_image_rect(self):
         return self.__image_rect
 
-    def get_floor_num(self):
+    def get_floor_num(self) -> int:
         return self.__floor_num
 
     def image_floor(self, screen, floor_locat, black_space = 7, space_left_side = 10):
@@ -35,4 +35,6 @@ class Floor:
         pygame.draw.line(screen, black, [
                          space_left_side, floor_locat - black_space / 2], [space_left_side + self.width_floor, floor_locat - black_space / 2], black_space)
         pygame.display.flip()
-        
+
+    def __str__(self) -> str:
+        return f'{self.__floor_num}'

@@ -5,6 +5,9 @@ class Elevator:
     def __init__(self, num_elevator) -> None:
         self.__image = None
         self.__image_rect = None
+
+    def get_num_elevator(self):
+        return self.num_elevator
         
     def get_image_rect(self):
         return self.__image_rect
