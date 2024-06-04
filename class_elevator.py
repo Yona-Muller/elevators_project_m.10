@@ -1,6 +1,9 @@
 import pygame
 from collections import deque
+import json
 
+with open("data.json") as data_:
+    data = json.load(data_)
 
 class Elevator:
     def __init__(self, num_elevator) -> None:
@@ -75,9 +78,9 @@ class Elevator:
         return self.__tasks_queue.popleft()
 
     def image_elevator(self, screen, elevator_loc_width, elevator_loc_height):
-        image_elevator = "elv.png"
+        image_elevator = data["image_ele"]
         img = pygame.image.load(image_elevator)
-        self.__image = pygame.transform.scale(img, (82, 82))
+        self.__image = pygame.transform.scale(img, (data["width_ele"], data["height_ele"]))
         self.__image_rect = self.__image.get_rect()
         self.__image_rect.topleft = (elevator_loc_width, elevator_loc_height)
         screen.blit(self.__image, self.__image_rect)

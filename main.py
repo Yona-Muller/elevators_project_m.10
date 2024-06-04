@@ -1,8 +1,10 @@
 import pygame
-from class_elevator import Elevator
-from class_floor import Floor
 from class_building import Building
+import json
 
+
+with open("data.json") as data_:
+    data = json.load(data_)
 
 num_floors = int(input("choose the number of floors: "))
 while not 0 < num_floors <= 100:
@@ -14,12 +16,10 @@ while not 0 < num_elevators <= 15:
 
 pygame.init()
 
-width = 310 + num_elevators * 100
-height = 120 + (num_floors - 1) * 60
+width = data["space_left"] * 2 + data["width_floor"] + num_elevators * data["width_ele"]
+height = data["height_ele"] * 2 + (num_floors - 1) * data["height_floor"]
 white = (255, 255, 255)
 screen = pygame.display.set_mode((width, height))
-move_x = 5
-move_y = 5
 
 
 pygame.display.set_caption("elevators game")
@@ -33,8 +33,6 @@ building.build_elevators(screen, height)
 
 target_position = None
 click_position = None
-
-
 fullscreen = False
 
 def toggle_fullscreen():

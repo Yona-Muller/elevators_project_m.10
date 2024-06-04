@@ -1,0 +1,14 @@
+{
+"width_floor": 300,
+"height_floor": 60,
+"width_ele": 62,
+"height_ele": 62,
+"white": [255, 255, 255],
+"space_left": 10,
+"space_down": 65,
+"black_space": 7,
+"image_ele": "elv.png",
+"image_floor": "whites.png",
+"speed": 3
+
+}
