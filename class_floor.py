@@ -6,13 +6,11 @@ black = (0, 0, 0)
 class Floor:
     def __init__(self, floor_num = None) -> None:
         self.__floor_num = floor_num
-        self.__button = None
-        self.__color_button = (20, 20, 20)
-        self.__clock = None
-        self.height_floor = 80
+        self.height_floor = 60
         self.width_floor = 300
         self.__image = None
         self.__image_rect = None
+        self.__timer = None
     
 
     def get_image(self):
@@ -23,6 +21,12 @@ class Floor:
 
     def get_floor_num(self) -> int:
         return self.__floor_num
+
+    def get_timer(self):
+        return self.__timer
+    
+    def set_timer(self, seconds):
+        self.__timer = seconds
 
     def image_floor(self, screen, floor_locat, black_space = 7, space_left_side = 10):
         image_floor = "whites.png"

@@ -15,7 +15,7 @@ while not 0 < num_elevators <= 15:
 pygame.init()
 
 width = 310 + num_elevators * 100
-height = 120 + (num_floors - 1) * 90
+height = 120 + (num_floors - 1) * 60
 white = (255, 255, 255)
 screen = pygame.display.set_mode((width, height))
 move_x = 5
@@ -64,9 +64,11 @@ while run:
                 toggle_fullscreen()
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             click_position = event.pos
+            now_click = True
 
     if click_position:
-        finished = building.move(screen, click_position)
+        finished = building.move(screen, click_position, now_click)
+        now_click = False
         if finished: click_position = None
         pygame.display.flip()
 
