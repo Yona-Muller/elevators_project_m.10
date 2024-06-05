@@ -1,14 +1,15 @@
 {
-"width_floor": 300,
+"width_floor": 150,
 "height_floor": 60,
 "width_ele": 62,
 "height_ele": 62,
-"white": [255, 255, 255],
+"white": [0, 0, 0],
 "space_left": 10,
-"space_down": 65,
+"space_down": 10,
 "black_space": 7,
 "image_ele": "elv.png",
-"image_floor": "whites.png",
-"speed": 3
+"image_floor": "20.png",
+"speed": 3,
+"ding": "ding.mp3"
 
 }

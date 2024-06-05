@@ -10,12 +10,14 @@ class Elevator:
         self.__num_elevator = num_elevator
         self.__image = None
         self.__image_rect = None
-        self.__elevator_floor = 0
+        self.__current_floor = 0
         self.__tasks_queue = deque([])
         self.__time_tasks = 0
         self.__elevator_moving = False
         self.__moving_to = None
         self.__moving_to_floor = None
+        self.__is_door_open = False
+        self.__color_timer = (0, 0, 0) #if self.__is_door_open else (0, 255, 0)
 
     def get_num_elevator(self):
         return self.__num_elevator
@@ -29,11 +31,11 @@ class Elevator:
     def set_image_rect(self, item):
         self.__image_rect = item
 
-    def get_elevator_floor(self):
-        return self.__elevator_floor
+    def get_current_floor(self):
+        return self.__current_floor
     
-    def set_elevator_floor(self, now_floor):
-        self.__elevator_floor = now_floor
+    def set_current_floor(self, now_floor):
+        self.__current_floor = now_floor
 
     def get_lest_task(self):
         return self.__tasks_queue[-1]
@@ -41,6 +43,20 @@ class Elevator:
     def get_time_tasks(self):
         return self.__time_tasks
     
+    def get_is_door_open(self):
+        return self.__is_door_open
+    
+    def set_is_door_open(self):
+        if self.__is_door_open:
+            self.__is_door_open = False
+            self.__color_timer = (0, 0, 0)
+        else:
+            self.__is_door_open = True
+            self.__color_timer = (70, 143, 34)
+    
+    def get_color_timer(self):
+        return self.__color_timer
+
     def no_tasks(self):
         return True if len(self.__tasks_queue) == 0 else False
     
@@ -63,21 +79,24 @@ class Elevator:
     def set_moving_to_floor(self, num_floor):
         self.__moving_to_floor = num_floor
 
+    def get_elevator_moving(self):
+        return self.__elevator_moving
+
     def moving(self):
         return self.__elevator_moving
 
     def insert_task(self, task):
         if self.no_tasks:
-            self.__time_tasks += abs(self.__elevator_floor - task) * 0.5
+            self.__time_tasks += abs(self.__current_floor + 1 - task) * 0.5 + 2
         else:
-            self.__time_tasks += abs(self.__tasks_queue[-1] - task) * 0.5
+            self.__time_tasks += abs(self.__tasks_queue[-1] + 1 - task) * 0.5 + 2
         self.__tasks_queue.append(task)
 
     def pop_task(self):
-        self.__time_tasks -= abs(self.__elevator_floor - self.__tasks_queue[0]) * 0.5
+        self.__time_tasks -= abs(self.__current_floor + 1 - self.__tasks_queue[0]) * 0.5
         return self.__tasks_queue.popleft()
 
-    def image_elevator(self, screen, elevator_loc_width, elevator_loc_height):
+    def draw_elevator(self, screen, elevator_loc_width, elevator_loc_height):
         image_elevator = data["image_ele"]
         img = pygame.image.load(image_elevator)
         self.__image = pygame.transform.scale(img, (data["width_ele"], data["height_ele"]))

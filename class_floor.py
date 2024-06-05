@@ -8,16 +8,16 @@ black = (0, 0, 0)
 
 
 class Floor:
-    def __init__(self, floor_num = None) -> None:
+    def __init__(self, floor_num=None) -> None:
         self.__floor_num = floor_num
         self.__image = None
         self.__image_rect = None
         self.__timer = None
-    
+        self.__elevator_com = None
 
     def get_image(self):
         return self.__image
-    
+
     def get_image_rect(self):
         return self.__image_rect
 
@@ -26,12 +26,18 @@ class Floor:
 
     def get_timer(self):
         return self.__timer
-    
+
     def set_timer(self, seconds):
         self.__timer = seconds
 
-    def image_floor(self, screen, floor_locat):
-        image_floor = "whites.png"
+    def get_elevator_com(self):
+        return self.__elevator_com
+    
+    def set_elevator_com(self, ele):
+        self.__elevator_com = ele
+
+    def draw_floor(self, screen, floor_locat):
+        image_floor = data["image_floor"]
         img = pygame.image.load(image_floor)
         self.__image = pygame.transform.scale(
             img, (data["width_floor"], data["height_floor"]))
@@ -41,6 +47,10 @@ class Floor:
         pygame.draw.line(screen, black, [
                          data["space_left"], floor_locat + data["black_space"] / 2], [data["space_left"] + data["width_floor"], floor_locat + data["black_space"] / 2], data["black_space"])
         pygame.display.flip()
+        font = pygame.font.Font(None, 30)
+        text = font.render(
+            f"{self.__floor_num}", True, (255, 255, 255))
+        screen.blit(text, (data["width_floor"] * 0.73, self.__image_rect.centery - 4))
 
     def __str__(self) -> str:
         return f'{self.__floor_num}'

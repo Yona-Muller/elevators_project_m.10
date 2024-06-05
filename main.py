@@ -17,7 +17,7 @@ while not 0 < num_elevators <= 15:
 pygame.init()
 
 width = data["space_left"] * 2 + data["width_floor"] + num_elevators * data["width_ele"]
-height = data["height_ele"] * 2 + (num_floors - 1) * data["height_floor"]
+height = data["space_down"] * 2 + num_floors * data["height_floor"]
 white = (255, 255, 255)
 screen = pygame.display.set_mode((width, height))
 
@@ -51,7 +51,6 @@ def toggle_fullscreen():
         building.build_floors(screen, width, height)
         building.build_elevators(screen, height)
         
-
 run = True
 while run:
     for event in pygame.event.get():
@@ -62,12 +61,12 @@ while run:
                 toggle_fullscreen()
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             click_position = event.pos
-            now_click = True
+            new_click = True
 
     if click_position:
-        finished = building.move(screen, click_position, now_click)
-        now_click = False
-        if finished: click_position = None
+        finished = building.move(screen, click_position, new_click)
+        new_click = False
+        # if finished: is_door_open = False
         pygame.display.flip()
 
         # Cap the frame rate
