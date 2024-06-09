@@ -14,7 +14,7 @@ while not 0 < num_elevators <= 15:
     num_elevators = int(
         input("choose a number of elevators between 1 in 15: "))
     
-# a = global_fullscreen 
+global fullscreen 
 
 
 pygame.init()
@@ -42,7 +42,7 @@ class Game:
         building.build_elevators(self.__screen, self.__height)
         self.screen_run(building)
 
-    def toggle_fullscreen(self, screen):
+    def toggle_fullscreen(self):
         global fullscreen
         fullscreen = not fullscreen
         if fullscreen:

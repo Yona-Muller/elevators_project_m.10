@@ -88,35 +88,8 @@ class Building:
                         pygame.image.load(data["image_floor_g"]), (data["width_floor"], data["height_floor"])))
         screen.fill(white)
         for elevator in self.__elevators:
-            if not elevator.moving() and not elevator.no_tasks():
-                elevator.set_moving_to_floor(elevator.pop_task())
-                self.__floors[elevator.get_moving_to_floor()].set_timer(
-                    abs(elevator.get_moving_to_floor() - elevator.get_current_floor()) * 0.5)
-                elevator.stop_or_start_moving()
-                elevator.set_moving_to(self.__floors[elevator.get_moving_to_floor()].get_image_rect(
-                ).centery - elevator.get_image_rect().centery)
-            if elevator.moving() and elevator.get_moving_to() > speed:
-                elevator.get_image_rect().centery += speed
-                elevator.set_moving_to(elevator.get_moving_to() - speed)
-            if elevator.moving() and elevator.get_moving_to() < speed:
-                elevator.get_image_rect().centery -= speed
-                elevator.set_moving_to(elevator.get_moving_to() + speed)
-            if elevator.moving() and speed + 2 >= elevator.get_moving_to() >= -speed - 2:
-                if not elevator.get_is_door_open():
-                    sound_file = data["ding"]
-                    pygame.mixer.music.load(sound_file)
-                    pygame.mixer.music.play()
-                    self.__floors[elevator.get_moving_to_floor()].set_timer(2)
-                    elevator.set_is_door_open()
-                    self.__floors[elevator.get_moving_to_floor()].set_image(pygame.transform.scale(
-                        pygame.image.load(data["image_floor"]), (data["width_floor"], data["height_floor"])))
-                elif self.__floors[elevator.get_moving_to_floor()].get_timer() <= 0:
-                    elevator.stop_or_start_moving()
-                    elevator.set_current_floor(elevator.get_moving_to_floor())
-                    self.__floors[elevator.get_moving_to_floor()
-                                  ].set_timer(None)
-                    elevator.set_moving_to_floor(None)
-                    elevator.set_is_door_open()
+            elevator.move_ele()
+            
         self.drawing_floors_and_elevators(screen)
         # if not is_door_open: return True
 

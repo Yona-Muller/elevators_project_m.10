@@ -95,6 +95,37 @@ class Elevator:
     def pop_task(self):
         self.__time_tasks -= abs(self.__current_floor + 1 - self.__tasks_queue[0]) * 0.5
         return self.__tasks_queue.popleft()
+    
+    def move_ele(self):
+        if not self.__elevator_moving and not self.no_tasks():
+            self.__moving_to_floor = self.pop_task()
+            self.__floors[self.get_moving_to_floor()].set_timer(
+                abs(self.get_moving_to_floor() - self.get_current_floor()) * 0.5)
+            self.stop_or_start_moving()
+            self.set_moving_to(self.__floors[self.get_moving_to_floor()].get_image_rect(
+            ).centery - self.get_image_rect().centery)
+        if self.moving() and self.get_moving_to() > data["speed"]:
+            self.get_image_rect().centery += data["speed"]
+            self.set_moving_to(self.get_moving_to() - data["speed"])
+        if self.moving() and self.get_moving_to() < data["speed"]:
+            self.get_image_rect().centery -= data["speed"]
+            self.set_moving_to(self.get_moving_to() + data["speed"])
+        if self.moving() and data["speed"] + 2 >= self.get_moving_to() >= -data["speed"] - 2:
+            if not self.get_is_door_open():
+                sound_file = data["ding"]
+                pygame.mixer.music.load(sound_file)
+                pygame.mixer.music.play()
+                self.__floors[self.get_moving_to_floor()].set_timer(2)
+                self.set_is_door_open()
+                self.__floors[self.get_moving_to_floor()].set_image(pygame.transform.scale(
+                    pygame.image.load(data["image_floor"]), (data["width_floor"], data["height_floor"])))
+            elif self.__floors[self.get_moving_to_floor()].get_timer() <= 0:
+                self.stop_or_start_moving()
+                self.set_current_floor(self.get_moving_to_floor())
+                self.__floors[self.get_moving_to_floor()
+                                ].set_timer(None)
+                self.set_moving_to_floor(None)
+                self.set_is_door_open()
 
     def draw_elevator(self, screen, elevator_loc_width, elevator_loc_height):
         image_elevator = data["image_ele"]
