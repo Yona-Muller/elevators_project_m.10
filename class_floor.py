@@ -17,6 +17,9 @@ class Floor:
 
     def get_image(self):
         return self.__image
+    
+    def set_image(self, new_image):
+        self.__image = new_image
 
     def get_image_rect(self):
         return self.__image_rect
@@ -37,8 +40,8 @@ class Floor:
         self.__elevator_com = ele
 
     def draw_floor(self, screen, floor_locat):
-        image_floor = data["image_floor"]
-        img = pygame.image.load(image_floor)
+        self.__image_floor = data["image_floor"]
+        img = pygame.image.load(self.__image_floor)
         self.__image = pygame.transform.scale(
             img, (data["width_floor"], data["height_floor"]))
         self.__image_rect = self.__image.get_rect()
@@ -50,7 +53,7 @@ class Floor:
         font = pygame.font.Font(None, 30)
         text = font.render(
             f"{self.__floor_num}", True, (255, 255, 255))
-        screen.blit(text, (data["width_floor"] * 0.73, self.__image_rect.centery - 4))
+        screen.blit(text, (data["width_floor"] * 0.72, self.__image_rect.centery - 4))
 
     def __str__(self) -> str:
         return f'{self.__floor_num}'
