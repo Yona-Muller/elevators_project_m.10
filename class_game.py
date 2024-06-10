@@ -14,8 +14,22 @@ while not 0 < num_elevators <= 15:
     num_elevators = int(
         input("choose a number of elevators between 1 in 15: "))
     
-global fullscreen 
-
+def toggle_fullscreen():
+    global fullscreen
+    fullscreen = not fullscreen
+    if fullscreen:
+        pygame.display.set_mode(
+            (game.__width, game.__height), pygame.FULLSCREEN)
+        game.__screen.fill((255, 255, 255))
+        building = Building(num_floors, num_elevators)
+        building.build_floors(game.__screen, game.__width, game.__height)
+        building.build_elevators(game.__screen, game.__height)
+    else:
+        pygame.display.set_mode((game.__width, game.__height))
+        game.__screen.fill((255, 255, 255))
+        building = Building(num_floors, num_elevators)
+        building.build_floors(game.__screen, game.__width, game.__height)
+        building.build_elevators(game.__screen, game.__height)  
 
 pygame.init()
 
@@ -35,29 +49,14 @@ class Game:
     def boot_screen(self):
         pygame.display.set_caption("elevators game")
         self.__screen.fill(self.__white)
-        pygame.display.flip()
+        # pygame.display.flip()
 
         building = Building(num_floors, num_elevators)
         building.build_floors(self.__screen, self.__width, self.__height)
         building.build_elevators(self.__screen, self.__height)
         self.screen_run(building)
 
-    def toggle_fullscreen(self):
-        global fullscreen
-        fullscreen = not fullscreen
-        if fullscreen:
-            pygame.display.set_mode(
-                (self.__width, self.__height), pygame.FULLSCREEN)
-            self.__screen.fill(self.__white)
-            building = Building(num_floors, num_elevators)
-            building.build_floors(self.__screen, self.__width, self.__height)
-            building.build_elevators(self.__screen, self.__height)
-        else:
-            pygame.display.set_mode((self.__width, self.__height))
-            self.__screen.fill(self.__white)
-            building = Building(num_floors, num_elevators)
-            building.build_floors(self.__screen, self.__width, self.__height)
-            building.build_elevators(self.__screen, self.__height)
+    
 
     def screen_run(self, building):
         run = True
@@ -67,7 +66,7 @@ class Game:
                     run = False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_f:  # Toggle fullscreen mode when 'F' key is pressed
-                        self.toggle_fullscreen()
+                        toggle_fullscreen()
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.__click_position = event.pos
                     new_click = True

@@ -49,7 +49,7 @@ class Floor:
         screen.blit(self.__image, self.__image_rect)
         pygame.draw.line(screen, black, [
                          data["space_left"], floor_locat + data["black_space"] / 2], [data["space_left"] + data["width_floor"], floor_locat + data["black_space"] / 2], data["black_space"])
-        pygame.display.flip()
+        # pygame.display.flip()
         font = pygame.font.Font(None, 30)
         text = font.render(
             f"{self.__floor_num}", True, (255, 255, 255))
