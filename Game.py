@@ -6,7 +6,6 @@ with open("data.json") as data_:
     data = json.load(data_)
 
 white = (255, 255, 255)
-new_click = False
 
 pygame.init()
 
@@ -18,6 +17,7 @@ class Game:
         self.__height = data["space_down"] * 2 + num_floors * data["height_floor"]
         self.__screen = pygame.display.set_mode((self.__width, self.__height))
         self.__click_position = None
+        self.__new_click = False
 
     def boot_screen(self):
         pygame.display.set_caption("elevators game")
@@ -35,9 +35,9 @@ class Game:
                     run = False
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.__click_position = event.pos
-                    new_click = True
-            building.move(self.__screen, self.__click_position, new_click)
-            new_click = False
+                    self.__new_click = True
+            building.move(self.__screen, self.__click_position, self.__new_click)
+            self.__new_click = False
             pygame.display.flip()
 
 game = Game(10, 5)

@@ -25,14 +25,15 @@ class Building:
                               data["space_down"] - data["height_ele"])
             x_pos += data["width_ele"]
 
-    def optimal_ele(self, floor):
+    def optimal_ele(self, floor: Floor):
         min = float("inf"), None
         for elevator in self.__ele:
             ele_missions = elevator.tasks_time(floor)
             if ele_missions < min[0]: min = ele_missions, elevator
-        min[1].insert_task(floor)
+        min[1].insert_task((floor, min[0]))
         floor.start_time(time.monotonic_ns())
-        floor.timer(min[0])
+        floor.set_timer(min[0])
+        floor.set_floor_status("ele_on_way", min[1])
 
 
     def move(self, screen, click_pos, new_click):
@@ -42,3 +43,6 @@ class Building:
                     ] * 1.3 and floor.get_image_rect().centery - data["width_floor"] // 4 <= click_pos[1] <= floor.get_image_rect().centery + data["width_floor"] // 4:
                     if not floor.get_floor_status()["ele_on_way"] and not floor.get_floor_status()["ele_on_floor"]:
                         self.optimal_ele(floor)
+        
+
+a = time.monotonic_ns() // 10 ** 8

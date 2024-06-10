@@ -11,8 +11,10 @@ class Elevator:
         self.__num = num
         self.__current_floor = 0
         self.__tasks_queue = deque([])
-        self.__ele_status = {"standing": True,
-                             "moving": False, "doors_open": False}
+        self.__ele_status = {"standing": True, "moving": False, "doors_open": False}
+
+    def set_ele_status(self, key, value):
+        self.__ele_status[key] = value
 
     def insert_task(self, task):
         self.__tasks_queue.append(task)
