@@ -96,7 +96,7 @@ class Building:
                     self.optimal_elevator(floor)
                     floor.set_image(pygame.transform.scale(
                         pygame.image.load(data["image_floor_g"]), (data["width_floor"], data["height_floor"])))
-        screen.fill(white)
+        # screen.fill(white)
         for elevator in self.__elevators:
             elevator.move_ele()
             if elevator.get_doors_open():

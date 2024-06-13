@@ -58,7 +58,7 @@ class Game:
 
     
 
-    def screen_run(self, building):
+    def screen_run(self, building: Building):
         run = True
         while run:
             for event in pygame.event.get():

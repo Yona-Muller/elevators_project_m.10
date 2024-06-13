@@ -19,11 +19,20 @@ class Floor:
     def get_image_rect(self):
         return self.__image_rect
     
-    def get_floor_status(self):
-        return self.__floor_status
+    def get_image(self):
+        return self.__image
+    
+    def get_floor_status(self, key):
+        return self.__floor_status[key]
+    
+    def get_num(self):
+        return self.__num
         
     def set_floor_status(self, key, value):
         self.__floor_status[key] = value
+
+    def get_timer(self):
+        return self.__timer
 
     def set_timer(self, seconds):
         self.__timer = seconds

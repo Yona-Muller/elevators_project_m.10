@@ -27,7 +27,7 @@ class Game:
         building.build_ele(self.__screen, self.__height)
         self.screen_run(building)
 
-    def screen_run(self, building):
+    def screen_run(self, building: Building):
         run = True
         while run:
             for event in pygame.event.get():
@@ -40,5 +40,5 @@ class Game:
             self.__new_click = False
             pygame.display.flip()
 
-game = Game(10, 5)
+game = Game(20, 5)
 game.boot_screen()
