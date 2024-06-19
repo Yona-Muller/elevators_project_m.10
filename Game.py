@@ -40,5 +40,5 @@ class Game:
             self.__new_click = False
             pygame.display.flip()
 
-game = Game(20, 5)
+game = Game(20, 1)
 game.boot_screen()
