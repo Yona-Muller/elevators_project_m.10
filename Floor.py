@@ -12,7 +12,7 @@ class Floor:
         self.__num = num
         self.__image = data["image_floor"]
         self.__image_rect = None
-        self.__floor_status = {"ele_on_way": False, "ele_on_floor": False, "floor_emp": True}
+        self.__ele_on_way = False
         self.__timer = None
         self.start_time = None
 
@@ -22,14 +22,17 @@ class Floor:
     def get_image(self):
         return self.__image
     
-    def get_floor_status(self, key):
-        return self.__floor_status[key]
+    def set_image(self, image):
+        self.__image = image
+    
+    def get_ele_on_way(self):
+        return self.__ele_on_way
     
     def get_num(self):
         return self.__num
         
-    def set_floor_status(self, key, value):
-        self.__floor_status[key] = value
+    def set_ele_on_way(self, value):
+        self.__ele_on_way = value
 
     def get_timer(self):
         return self.__timer

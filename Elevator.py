@@ -61,12 +61,12 @@ class Elevator:
             return abs(self.__current_floor - floor) * 0.5
         if not self.__tasks_queue:
             if self.__ele_status["doors open"]:
-                return abs(self.__current_floor - floor) * 0.5 + 2 - (time.monotonic_ns() - self.__ele_status["doors open"])//10**9 + self.__time_left
+                return abs(self.__current_floor - floor) * 0.5 + 2 - (time.monotonic_ns() - self.__ele_status["doors open"])/10**9 + self.__time_left
             else:
                 return abs(self.__current_floor - floor) * 0.5 + 2 + self.__time_left
         else:
             if self.__ele_status["doors open"]:
-                return abs(self.__tasks_queue[-1][1] - floor) * 0.5 + 2 - (time.monotonic_ns() - self.__ele_status["doors open"])//10**9 + self.__time_tasks + self.__time_left
+                return abs(self.__tasks_queue[-1][1] - floor) * 0.5 + 2 - (time.monotonic_ns() - self.__ele_status["doors open"])/10**9 + self.__time_tasks + self.__time_left
             else:
                 return abs(self.__tasks_queue[-1][1] - floor) * 0.5 + 2 + self.__time_tasks + self.__time_left
 

@@ -20,8 +20,7 @@ class Building:
 
     def build_ele(self, screen, height, x_pos=data["width_floor"] + data["space_left"] * 2):
         for elevator in self.__ele:
-            elevator.draw_ele(screen, x_pos, height -
-                              data["space_down"] - data["height_ele"])
+            elevator.draw_ele(screen, x_pos, height - data["space_down"] - data["height_ele"])
             x_pos += data["width_ele"]
    
     def draw_building(self, screen):
@@ -33,22 +32,23 @@ class Building:
             text = font.render(
                 f"{floor.get_num()}", True, (255, 255, 255))
             screen.blit(text, (data["width_floor"] * 0.73, floor.get_image_rect().centery - 4))
-            if floor.get_floor_status("ele_on_way"):
+            if floor.get_ele_on_way():
                 timer = floor.get_timer() - (time.monotonic_ns() - floor.start_time) / 10**9
                 if timer >= 0:
                     font = pygame.font.Font(None, data["width_floor"] // 4)
                     text = font.render(
                         f"{int(timer // 1):02}:{int((timer % 1) * 100):02}", True, (0, 0, 0))
                     screen.blit(text, (20, floor.get_image_rect().centery - 7))
-                elif floor.get_floor_status("ele_on_way").get_ele_status("doors open"):
-                    if (time.monotonic_ns() - floor.get_floor_status("ele_on_way").get_ele_status("doors open")) / 10**9 < 2:
+                elif floor.get_ele_on_way().get_ele_status("doors open"):
+                    floor.set_image(pygame.transform.scale(pygame.image.load(data["image_floor"]), (data["width_floor"], data["height_floor"])))
+                    if (time.monotonic_ns() - floor.get_ele_on_way().get_ele_status("doors open")) / 10**9 < 2:
                         font = pygame.font.Font(None, data["width_floor"] // 9)
                         text = font.render("doors open!", True, (70, 143, 34))
                         screen.blit(text, (20, floor.get_image_rect().centery))
-                        # floor.set_floor_status("ele_on_floor", True)
                     else:
-                        floor.get_floor_status("ele_on_way").set_ele_status("standing", True)
-                        floor.set_floor_status("ele_on_way", False)
+                        floor.get_ele_on_way().set_ele_status("standing", True)
+                        floor.get_ele_on_way().set_ele_status("doors open", False)
+                        floor.set_ele_on_way(False)
 
     def optimal_ele(self, floor: Floor):
         min = float("inf"), None
@@ -58,16 +58,16 @@ class Building:
         min[1].insert_task((floor.get_image_rect().centery, floor.get_num()))
         floor.start_time = time.monotonic_ns()
         floor.set_timer(min[0])
-        floor.set_floor_status("ele_on_way", min[1])
-        print((min[1].get_num(), min[0]))
+        floor.set_ele_on_way(min[1])
 
 
     def move(self, screen, click_pos, new_click):
         if new_click:
             for floor in self.__floors:
-                if floor.get_image_rect().centerx <= click_pos[0] <= floor.get_image_rect().centerx + data["width_floor"
-                    ] * 1.3 and floor.get_image_rect().centery - data["width_floor"] // 20 <= click_pos[1] <= floor.get_image_rect().centery + data["width_floor"] // 20:
-                    if not floor.get_floor_status("ele_on_way") and not floor.get_floor_status("ele_on_floor"):
+                if floor.get_image_rect().centerx - data["width_floor"] * 1.3 <= click_pos[0] <= floor.get_image_rect().centerx + data["width_floor"
+                    ] * 1.3 and floor.get_image_rect().centery - data["height_floor"] // 5 <= click_pos[1] <= floor.get_image_rect().centery + data["height_floor"] // 3:
+                    if not floor.get_ele_on_way():
+                        floor.set_image(pygame.transform.scale(pygame.image.load(data["image_floor_g"]), (data["width_floor"], data["height_floor"])))
                         self.optimal_ele(floor)
                         # time.sleep(3)
         screen.fill((255, 255, 255))

@@ -18,6 +18,7 @@ class Game:
         self.__screen = pygame.display.set_mode((self.__width, self.__height))
         self.__click_position = None
         self.__new_click = False
+        self.__fullscreen = False
 
     def boot_screen(self):
         pygame.display.set_caption("elevators game")
@@ -33,6 +34,13 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_f:  # Toggle fullscreen mode when 'F' key is pressed
+                        self.__fullscreen = not self.__fullscreen
+                        if self.__fullscreen:
+                            pygame.display.set_mode((self.__width, self.__height), pygame.FULLSCREEN)
+                        else:
+                            pygame.display.set_mode((self.__width, self.__height))
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.__click_position = event.pos
                     self.__new_click = True
@@ -40,5 +48,5 @@ class Game:
             self.__new_click = False
             pygame.display.flip()
 
-game = Game(20, 1)
+game = Game(17, 1)
 game.boot_screen()
