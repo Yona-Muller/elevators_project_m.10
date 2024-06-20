@@ -49,7 +49,7 @@ class Game:
         Sets up the initial game screen with building layout and starts the game loop.
         """
         pygame.display.set_caption("elevators game")
-        self.__screen.fill(white)
+        self.__screen.fill((180, 232, 193))
         building = Building(self.__num_floors, self.__num_ele)
         building.build_floors(self.__screen, self.__height)
         building.build_ele(self.__screen, self.__height)
@@ -71,8 +71,7 @@ class Game:
                     if event.key == pygame.K_f:  # Toggle fullscreen mode when 'F' key is pressed
                         self.__fullscreen = not self.__fullscreen
                         if self.__fullscreen:
-                            pygame.display.set_mode(
-                                (self.__width, self.__height), pygame.FULLSCREEN)
+                            pygame.display.set_mode((self.__width, self.__height), pygame.FULLSCREEN)
                         else:
                             pygame.display.set_mode(
                                 (self.__width, self.__height))
@@ -85,5 +84,5 @@ class Game:
             pygame.display.flip()
 
 
-game = Game(17, 5)
-game.boot_screen()
+# game = Game(17, 1)
+# game.boot_screen()

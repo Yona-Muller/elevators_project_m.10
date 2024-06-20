@@ -108,7 +108,7 @@ class Building:
                     if not floor.get_ele_on_way():
                         floor.set_image(pygame.transform.scale(pygame.image.load(data["image_floor_g"]), (data["width_floor"], data["height_floor"])))
                         self.optimal_ele(floor)
-        screen.fill((255, 255, 255))
+        screen.fill((180, 232, 193))
         for elevator in self.__ele:
             elevator.move()
         self.draw_building(screen)

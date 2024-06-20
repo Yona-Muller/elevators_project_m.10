@@ -160,13 +160,14 @@ class Elevator:
             correct_time = time.monotonic_ns()
             time_passed = (correct_time - self.__start_time)/ 10**9
             self.__time_left = self.__time_task - time_passed
-            if self.__image_rect.centery - self.__ele_status["moving"][0] > 0:
-                self.__image_rect.centery = self.__ele_status["moving"][0] + (
-                    self.__time_left * data["height_floor"] * 2)
-            else:
-                self.__image_rect.centery = self.__ele_status["moving"][0] - (
-                    self.__time_left * data["height_floor"] * 2)
-            if self.__ele_status["moving"][0] - 1 <= self.__image_rect.centery <= self.__ele_status["moving"][0] + 1:
+            if self.__ele_status["moving"][0] != self.__image_rect.centery:
+                if self.__image_rect.centery - self.__ele_status["moving"][0] > 0:
+                    self.__image_rect.centery = self.__ele_status["moving"][0] + (
+                        self.__time_left * data["height_floor"] * 2)
+                else:
+                    self.__image_rect.centery = self.__ele_status["moving"][0] - (
+                        self.__time_left * data["height_floor"] * 2)
+            if self.__ele_status["moving"][0] - 2 <= self.__image_rect.centery <= self.__ele_status["moving"][0] + 2:
                 self.ding()
                 self.__ele_status["moving"] = False
                 self.__ele_status["doors open"] = time.monotonic_ns()
