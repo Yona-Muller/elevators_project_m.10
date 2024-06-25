@@ -10,25 +10,23 @@ with open("data.json") as data_:
 pygame.init()
 
 # Set up the screen
-screen_width = 800
-screen_height = 600
-screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
-print(str(pygame.FULLSCREEN.numerator))
-screen = pygame.display.set_mode((100, 100), pygame.FULLSCREEN)
+screen_width = 1920
+screen_height = 1080
+screen = pygame.display.set_mode((screen_width, screen_height))
 
 pygame.display.set_caption("Input Example")
 
 # Set up fonts
-font = pygame.font.Font(None, 25)
+font = pygame.font.Font(None, 45)
 
 # Set up colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 # Define the input areas
-input_rect1 = pygame.Rect(255, 540, 35, 25)
-input_rect2 = pygame.Rect(615, 540, 35, 25)
-play_rect = pygame.Rect(329, 513, 130, 57)
+input_rect1 = pygame.Rect(610, 975, 70, 40)
+input_rect2 = pygame.Rect(1469, 975, 70, 40)
+play_rect = pygame.Rect(800, 930, 300, 100)
 # Main loop
 num_floors = ''
 num_elevators = ''
@@ -48,11 +46,11 @@ while run:
     
     # Render the current text for input area 1
     text_surface1 = font.render(num_floors, True, BLACK)
-    screen.blit(text_surface1, (input_rect1.x + 10, input_rect1.y + 5))
+    screen.blit(text_surface1, (input_rect1.x + 25, input_rect1.y + 5))
     
     # Render the current text for input area 2
     text_surface2 = font.render(num_elevators, True, BLACK)
-    screen.blit(text_surface2, (input_rect2.x + 10, input_rect2.y + 5))
+    screen.blit(text_surface2, (input_rect2.x + 25, input_rect2.y + 5))
     
     # Draw the input areas
     # pygame.draw.rect(screen, WHITE, input_rect1, 2)
@@ -79,7 +77,7 @@ while run:
                     num_floors = int(num_floors)
                     num_elevators = int(num_elevators)
                     run = False
-                    pygame.display.set_mode((50, 50), pygame.FULLSCREEN)
+                    # pygame.display.set_mode((50, 50), pygame.FULLSCREEN)
                     game = Game(num_elevators, num_floors)
                     game.boot_screen()
                 except:

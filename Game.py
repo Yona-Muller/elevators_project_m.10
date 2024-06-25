@@ -39,10 +39,10 @@ class Game:
             data["width_floor"] + num_ele * data["width_ele"]
         self.__height = data["space_down"] * \
             2 + num_floors * data["height_floor"]
-        self.__screen = pygame.display.set_mode((self.__width, self.__height))
+        self.__screen = pygame.display.set_mode((self.__width, self.__height), pygame.FULLSCREEN)
         self.__click_position = None
         self.__new_click = False
-        self.__fullscreen = False
+        self.__fullscreen = True
 
     def boot_screen(self):
         """
@@ -73,8 +73,7 @@ class Game:
                         if self.__fullscreen:
                             pygame.display.set_mode((self.__width, self.__height), pygame.FULLSCREEN)
                         else:
-                            pygame.display.set_mode(
-                                (self.__width, self.__height))
+                            pygame.display.set_mode((self.__width, self.__height))
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     self.__click_position = event.pos
                     self.__new_click = True
@@ -84,5 +83,5 @@ class Game:
             pygame.display.flip()
 
 
-# game = Game(17, 1)
+# game = Game(17, 2)
 # game.boot_screen()
