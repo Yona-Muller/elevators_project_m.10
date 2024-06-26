@@ -7,10 +7,10 @@
 "space_left": 10,
 "space_down": 10,
 "black_space": 7,
-"image_ele": "elv.png",
-"image_floor": "20.png",
-"image_floor_g": "21.png",
+"image_ele": "../resources/images/elv.png",
+"image_floor": "../resources/images/20.png",
+"image_floor_g": "../resources/images/21.png",
 "speed": 3,
-"ding": "ding.mp3"
+"ding": "../resources/audio/ding.mp3"
 
 }
