@@ -1,16 +1,15 @@
 {
-"width_floor": 150,
-"height_floor": 60,
-"width_ele": 58,
-"height_ele": 58,
-"white": [0, 0, 0],
-"space_left": 10,
-"space_down": 10,
-"black_space": 7,
-"image_ele": "elv.png",
-"image_floor": "20.png",
-"image_floor_g": "21.png",
-"speed": 3,
-"ding": "ding.mp3"
-
+  "floor_width": 150,
+  "floor_height": 60,
+  "elevator_width": 58,
+  "elevator_height": 58,
+  "background_color": [0, 0, 0],
+  "left_margin": 10,
+  "bottom_margin": 10,
+  "elevator_spacing": 7,
+  "elevator_image": "assets/elv.png",
+  "floor_image": "assets/floor.png",
+  "active_floor_image": "assets/green_floor.png",
+  "elevator_speed": 3,
+  "ding_sound": "audio/ding.mp3"
 }

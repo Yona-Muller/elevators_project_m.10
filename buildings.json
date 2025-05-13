@@ -1,0 +1,11 @@
+{
+  "building_0": {
+    "number_of_floors": 17,
+    "number_of_elevators": 2
+  },
+
+  "building_1": {
+    "number_of_floors": 10,
+    "number_of_elevators": 3
+  }
+}
