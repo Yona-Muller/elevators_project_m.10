@@ -25,3 +25,6 @@ ELEVATOR_SPEED = 3
 # colors:
 WHITE = 255, 255, 255
 
+
+# Added missing general settings
+IMAGE_FLOOR = 'assets/floor.png'

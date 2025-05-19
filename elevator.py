@@ -39,7 +39,7 @@ class Elevator:
         self.__time_task = None
         self.__start_time = None
         self.__image_rect = None
-        self.__image = None
+        self.__image = data["elevator_image"]
         self.__time_left = None
         self.__time_tasks = 0
 
@@ -172,19 +172,12 @@ class Elevator:
                 self.__ele_status["moving"] = False
                 self.__ele_status["doors open"] = time.monotonic_ns()
 
-    def draw_ele(self, screen, width, height):
-        """
-        Draws the elevator on the screen at a specific position.
-
-        Args:
-        - screen (pygame.Surface): The surface of the screen to draw on.
-        - width (int): X-coordinate position to draw the elevator.
-        - height (int): Y-coordinate position to draw the elevator.
-        """
+    def draw_ele(self, screen, width, height, x_offset=0):
         image_elevator = data["image_ele"]
         img = pygame.image.load(image_elevator)
         self.__image = pygame.transform.scale(
             img, (data["width_ele"], data["height_ele"]))
         self.__image_rect = self.__image.get_rect()
-        self.__image_rect.topleft = (width, height)
+        print("hi " , self.get_image_rect())
+        self.__image_rect.topleft = (width + x_offset, height)
         screen.blit(self.__image, self.__image_rect)

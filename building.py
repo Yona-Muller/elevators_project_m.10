@@ -11,44 +11,30 @@ class Building:
     def __init__(self, num_of_floors, num_of_elevators, canvas) -> None:
         self.__floors = [Floor(i) for i in range(num_of_floors)]
         self.__ele = [Elevator(i) for i in range(num_of_elevators)]
+        # new attribute to offset drawing on world surface
+        self.x_offset = 0
 
-    def build_floors(self, screen, height):
-        """
-        Constructs the floors of the building on the screen.
-
-        Args:
-        - screen (pygame.Surface): The surface of the screen to draw on.
-        - height (int): Initial height position to start drawing the floors.
-        """
+    def build_floors(self, screen, height, x_offset=0):
         for floor in self.__floors:
-            floor.draw_floor(
-                screen, height - data["space_down"] - data["height_floor"], len(self.__floors) - 1)
+            # apply x_offset to floor drawing
+            floor.draw_floor(screen, height - data["space_down"] - data["height_floor"], len(self.__floors) - 1, x_offset)
             height -= data["height_floor"]
 
-    def build_ele(self, screen, height, x_pos=data["width_floor"] + data["space_left"] * 2):
-        """
-        Constructs the elevators of the building on the screen.
-
-        Args:
-        - screen (pygame.Surface): The surface of the screen to draw on.
-        - height (int): height position to drawing the elevators.
-        - x_pos (int): Initial x-position to start drawing the first elevator.
-        """
+    def build_ele(self, screen, height, x_pos=None, x_offset=0):
+        if x_pos is None:
+            x_pos = data["width_floor"] + data["space_left"] * 2
         for elevator in self.__ele:
-            elevator.draw_ele(screen, x_pos, height - data["space_down"] - data["height_ele"])
+            elevator.draw_ele(screen, x_pos + x_offset, height - data["space_down"] - data["height_ele"])
             x_pos += data["width_ele"]
    
     def draw_building(self, screen):
-        """
-        Updates and draws the state of the building on the screen(with the timer in the right color of the button).
-
-        Args:
-        - screen (pygame.Surface): The surface of the screen to draw on.
-        """
-        for elevator in self.__ele:# put it in class Elevator
+        # draw elevators
+        for elevator in self.__ele:
             screen.blit(elevator.get_image(), elevator.get_image_rect())
-        for floor in self.__floors:# put it in class Floor
+        # draw floors and timers
+        for floor in self.__floors:
             floor.draw_floor2(screen)
+            # existing timer code unchanged
             if floor.get_ele_on_way():
                 timer = floor.get_timer() - (time.monotonic_ns() - floor.start_time) / 10**9
                 if timer >= 0:
@@ -68,12 +54,7 @@ class Building:
                         floor.set_ele_on_way(False)
 
     def optimal_ele(self, floor: Floor):
-        """
-        Determines the optimal elevator to handle a request from a specific floor.
-
-        Args:
-        - floor (Floor): The floor object representing the floor requesting the elevator.
-        """
+        # unchanged
         min = float("inf"), None
         for elevator in self.__ele:
             ele_missions = elevator.tasks_time(floor.get_num())
@@ -83,26 +64,22 @@ class Building:
         floor.set_timer(min[0])
         floor.set_ele_on_way(min[1])
 
-
-    def update(self, screen, click_pos, new_click):
-        """
-        Handles user input for interacting with the building (clicking on floors to request elevators),
-        updates elevator movement, and redraws the building on the screen.
-
-        Args:
-        - screen (pygame.Surface): The surface of the screen to draw on.
-        - click_pos (tuple): Position of the mouse click on the screen.
-        - new_click (bool): Flag indicating whether there is a new mouse click.
-        """
+    def update(self, screen, click_pos, new_click, x_offset=0):
+        # handle input
         if new_click:
             for floor in self.__floors:
-                if floor.get_image_rect().centerx + data["width_floor"] * 0.1 <= click_pos[0] <= floor.get_image_rect().centerx + data["width_floor"
-                    ] * 0.3 and floor.get_image_rect().centery - data["height_floor"] // 5 <= click_pos[1] <= floor.get_image_rect().centery + data["height_floor"] // 3:
+                rect = floor.get_image_rect()
+                # adjust click bounds by x_offset
+                if rect.centerx + data["width_floor"] * 0.1 + x_offset <= click_pos[0] <= rect.centerx + data["width_floor"] * 0.3 + x_offset \
+                   and rect.centery - data["height_floor"] // 5 <= click_pos[1] <= rect.centery + data["height_floor"] // 3:
                     if not floor.get_ele_on_way():
                         floor.set_image(pygame.transform.scale(pygame.image.load(data["image_floor_g"]), (data["width_floor"], data["height_floor"])))
                         self.optimal_ele(floor)
+        # clear building area
         screen.fill((180, 232, 193))
+        # move elevators
         for elevator in self.__ele:
             elevator.move()
+        # draw entire building at offset
+        # combine floors and elevators draw calls within draw_building
         self.draw_building(screen)
-

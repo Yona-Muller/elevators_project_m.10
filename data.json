@@ -8,7 +8,7 @@
   "bottom_margin": 10,
   "elevator_spacing": 7,
   "elevator_image": "assets/elv.png",
-  "floor_image": "assets/floor.png",
+  "image_floor": "assets/floor.png",
   "active_floor_image": "assets/green_floor.png",
   "elevator_speed": 3,
   "ding_sound": "audio/ding.mp3"

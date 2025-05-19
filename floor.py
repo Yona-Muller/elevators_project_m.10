@@ -107,36 +107,20 @@ class Floor:
         """
         self.__timer = seconds
 
-    def draw_floor2(self, screen):
-        """
-        Draws the floor representation on the screen.
-
-        Args:
-        - screen (pygame.Surface): The surface of the screen to draw on.
-        """
-        screen.blit(self.__image, self.__image_rect)
+    def draw_floor2(self, screen, x_offset=0):
+        rect = self.__image_rect.copy()
+        rect.x += x_offset
+        screen.blit(self.__image, rect)
         font = pygame.font.Font(None, data["width_floor"] // 5)
         text = font.render(
             f"{self.__num}", True, (255, 255, 255))
-        screen.blit(text, (data["width_floor"] * 0.71,
-                    self.__image_rect.centery - 4))
+        screen.blit(text, (rect.x + data["width_floor"] * 0.71,
+                    rect.centery - 4))
 
-    def draw_floor(self, screen, height, num_floors):
-        """
-        Draws the floor representation on the screen at a specific height.
-
-        Args:
-        - screen (pygame.Surface): The surface of the screen to draw on.
-        - height (int): Initial height position to start drawing the floor.
-        - num_floors (int): Total number of floors in the building.
-        """
+    def draw_floor(self, screen, height, num_floors, x_offset=0):
         img = pygame.image.load(self.__image)
         self.__image = pygame.transform.scale(
             img, (data["width_floor"], data["height_floor"]))
         self.__image_rect = self.__image.get_rect()
-        self.__image_rect.topleft = (data["space_left"], height)
+        self.__image_rect.topleft = (data["space_left"] + x_offset, height)
         screen.blit(self.__image, self.__image_rect)
-        font = pygame.font.Font(None, data["height_floor"] // 2)
-        text = font.render(f"{self.__num}", True, white)
-        screen.blit(text, (data["width_floor"] * 0.72,
-                    self.__image_rect.centery - 4))
