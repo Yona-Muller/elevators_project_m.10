@@ -5,6 +5,7 @@ pygame.init()
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
+
 class GameManager:
 
     def __init__(self, general_settings, building_settings) -> None:
@@ -87,6 +88,29 @@ class GameManager:
 
 
 
-game = GameManager({(1, 1)}, load_buildings_array())
+game = GameManager({
+  "buildings": {
+    "building_0": {
+      "number_of_floors": 10,
+      "number_of_elevators": 3
+    },
+    "building_1": {
+      "number_of_floors": 10,
+      "number_of_elevators": 3
+    },
+    "building_2": {
+      "number_of_floors": 10,
+      "number_of_elevators": 3
+    },
+    "building_3": {
+      "number_of_floors": 10,
+      "number_of_elevators": 3
+    },
+    "building_4": {
+      "number_of_floors": 10,
+      "number_of_elevators": 3
+    }
+  }
+}, load_buildings_array())
 game.boot_screen()
 
