@@ -35,13 +35,16 @@ class Elevator:
         self.__current_floor = 0
         self.__tasks_queue = deque([])
         self.__ele_status = {"standing": True,
-                             "moving": False, "doors open": False}
+                            "moving": False, "doors open": False}
         self.__time_task = None
         self.__start_time = None
-        self.__image_rect = None
-        self.__image = data["elevator_image"]
+        self.__image = pygame.image.load(data["elevator_image"])
+        self.__image = pygame.transform.scale(
+            self.__image, (data["elevator_width"], data["elevator_height"]))
+        self.__image_rect = self.__image.get_rect()
         self.__time_left = None
         self.__time_tasks = 0
+
 
     def get_image(self):
         """
@@ -96,7 +99,7 @@ class Elevator:
         """
         Plays a ding sound to indicate the elevator has reached a floor.
         """
-        sound_file = data["ding"]
+        sound_file = data["ding_sound"]
         pygame.mixer.music.load(sound_file)
         pygame.mixer.music.play()
 
@@ -163,20 +166,20 @@ class Elevator:
             if self.__ele_status["moving"][0] != self.__image_rect.centery:
                 if self.__image_rect.centery - self.__ele_status["moving"][0] > 0:
                     self.__image_rect.centery = self.__ele_status["moving"][0] + (
-                        self.__time_left * data["height_floor"] * 2)
+                        self.__time_left * data["floor_height"] * 2)
                 else:
                     self.__image_rect.centery = self.__ele_status["moving"][0] - (
-                        self.__time_left * data["height_floor"] * 2)
+                        self.__time_left * data["floor_height"] * 2)
             if self.__ele_status["moving"][0] - 2 <= self.__image_rect.centery <= self.__ele_status["moving"][0] + 2:
                 self.ding()
                 self.__ele_status["moving"] = False
                 self.__ele_status["doors open"] = time.monotonic_ns()
 
     def draw_ele(self, screen, width, height, x_offset=0):
-        image_elevator = data["image_ele"]
+        image_elevator = data["elevator_image"]
         img = pygame.image.load(image_elevator)
         self.__image = pygame.transform.scale(
-            img, (data["width_ele"], data["height_ele"]))
+            img, (data["elevator_width"], data["elevator_height"]))
         self.__image_rect = self.__image.get_rect()
         print("hi " , self.get_image_rect())
         self.__image_rect.topleft = (width + x_offset, height)

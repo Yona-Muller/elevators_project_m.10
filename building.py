@@ -38,14 +38,14 @@ class Building:
             if floor.get_ele_on_way():
                 timer = floor.get_timer() - (time.monotonic_ns() - floor.start_time) / 10**9
                 if timer >= 0:
-                    font = pygame.font.Font(None, data["width_floor"] // 4)
+                    font = pygame.font.Font(None, data["floor_width"] // 4)
                     text = font.render(
                         f"{int(timer // 1):02}:{int((timer % 1) * 100):02}", True, (0, 0, 0))
                     screen.blit(text, (20, floor.get_image_rect().centery - 7))
                 elif floor.get_ele_on_way().get_ele_status("doors open"):
-                    floor.set_image(pygame.transform.scale(pygame.image.load(data["image_floor"]), (data["width_floor"], data["height_floor"])))
+                    floor.set_image(pygame.transform.scale(pygame.image.load(data["image_floor"]), (data["floor_width"], data["floor_height"])))
                     if (time.monotonic_ns() - floor.get_ele_on_way().get_ele_status("doors open")) / 10**9 < 2:
-                        font = pygame.font.Font(None, data["width_floor"] // 9)
+                        font = pygame.font.Font(None, data["floor_width"] // 9)
                         text = font.render("doors open!", True, (70, 143, 34))
                         screen.blit(text, (20, floor.get_image_rect().centery))
                     else:
@@ -70,10 +70,10 @@ class Building:
             for floor in self.__floors:
                 rect = floor.get_image_rect()
                 # adjust click bounds by x_offset
-                if rect.centerx + data["width_floor"] * 0.1 + x_offset <= click_pos[0] <= rect.centerx + data["width_floor"] * 0.3 + x_offset \
-                   and rect.centery - data["height_floor"] // 5 <= click_pos[1] <= rect.centery + data["height_floor"] // 3:
+                if rect.centerx + data["floor_width"] * 0.1 + x_offset <= click_pos[0] <= rect.centerx + data["floor_width"] * 0.3 + x_offset \
+                   and rect.centery - data["floor_height"] // 5 <= click_pos[1] <= rect.centery + data["floor_height"] // 3:
                     if not floor.get_ele_on_way():
-                        floor.set_image(pygame.transform.scale(pygame.image.load(data["image_floor_g"]), (data["width_floor"], data["height_floor"])))
+                        floor.set_image(pygame.transform.scale(pygame.image.load(data["active_floor_image"]), (data["floor_width"], data["floor_height"])))
                         self.optimal_ele(floor)
         # clear building area
         screen.fill((180, 232, 193))

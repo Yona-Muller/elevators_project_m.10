@@ -90,26 +90,26 @@ class GameManager:
 
 game = GameManager({
   "buildings": {
-    "building_0": {
-      "number_of_floors": 10,
-      "number_of_elevators": 3
-    },
-    "building_1": {
-      "number_of_floors": 10,
-      "number_of_elevators": 3
-    },
-    "building_2": {
-      "number_of_floors": 10,
-      "number_of_elevators": 3
-    },
-    "building_3": {
-      "number_of_floors": 10,
-      "number_of_elevators": 3
-    },
-    "building_4": {
-      "number_of_floors": 10,
-      "number_of_elevators": 3
-    }
+    # "building_0": {
+    #   "number_of_floors": 1,
+    #   "number_of_elevators": 1
+    # },
+    # "building_1": {
+    #   "number_of_floors": 10,
+    #   "number_of_elevators": 3
+    # },
+    # "building_2": {
+    #   "number_of_floors": 10,
+    #   "number_of_elevators": 3
+    # },
+    # "building_3": {
+    #   "number_of_floors": 10,
+    #   "number_of_elevators": 3
+    # },
+    # "building_4": {
+    #   "number_of_floors": 10,
+    #   "number_of_elevators": 3
+    # }
   }
 }, load_buildings_array())
 game.boot_screen()

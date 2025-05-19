@@ -29,8 +29,10 @@ class Floor:
         - num (int): Floor number.
         """
         self.__num = num
-        self.__image = data["image_floor"]
-        self.__image_rect = None
+        img = pygame.image.load(data["image_floor"])
+        self.__image = pygame.transform.scale(
+            img, (data["floor_width"], data["floor_height"]))
+        self.__image_rect = self.__image.get_rect()
         self.__ele_on_way = False
         self.__timer = None
         self.start_time = None
@@ -111,16 +113,16 @@ class Floor:
         rect = self.__image_rect.copy()
         rect.x += x_offset
         screen.blit(self.__image, rect)
-        font = pygame.font.Font(None, data["width_floor"] // 5)
+        font = pygame.font.Font(None, data["floor_width"] // 5)
         text = font.render(
             f"{self.__num}", True, (255, 255, 255))
-        screen.blit(text, (rect.x + data["width_floor"] * 0.71,
+        screen.blit(text, (rect.x + data["floor_width"] * 0.71,
                     rect.centery - 4))
 
     def draw_floor(self, screen, height, num_floors, x_offset=0):
-        img = pygame.image.load(self.__image)
-        self.__image = pygame.transform.scale(
-            img, (data["width_floor"], data["height_floor"]))
-        self.__image_rect = self.__image.get_rect()
+        # img = pygame.image.load(self.__image)
+        # self.__image = pygame.transform.scale(
+        #     img, (data["width_floor"], data["height_floor"]))
+        # self.__image_rect = self.__image.get_rect()
         self.__image_rect.topleft = (data["space_left"] + x_offset, height)
         screen.blit(self.__image, self.__image_rect)
