@@ -1,0 +1,31 @@
+{
+  "floor": {
+    "height": 60,
+    "width": 100,
+    "separator_height": 7,
+    "button_width": 40,
+    "button_height": 20,
+    "button_margin": 10,
+    "margin_left": 20
+  },
+  "elevator": {
+    "width": 60,
+    "height": 50,
+    "speed": 0.5,
+    "door_open_time": 2.0,
+    "image_path": "assets/elv.png"
+  },
+  "building": {
+    "buildings": [
+      { "floors": 15, "elevators": 5 },
+      { "floors": 10, "elevators": 2 },
+      { "floors": 8, "elevators": 4 },
+      { "floors": 3, "elevators": 1 }
+    ],
+    "margin": 10,
+    "elevator_spacing": 2
+  },
+  "sound": {
+    "ding_path": "audio/ding.wav"
+  }
+}

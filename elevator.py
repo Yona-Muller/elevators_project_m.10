@@ -1,186 +1,178 @@
 import pygame
-import json
 import time
-from collections import deque
+import json
 
-with open("data.json") as data_:
-    data = json.load(data_)
-
+# Load configuration file
+with open('config.json', 'r') as f:
+    CONFIG = json.load(f)
 
 class Elevator:
-    """
-    Represents an elevator object with various functionalities.
-
-    Attributes:
-    - __num (int): Identifier number of the elevator.
-    - __current_floor (int): Current floor where the elevator is located.
-    - __tasks_queue (deque): Queue of tasks (floor destinations) for the elevator.
-    - __ele_status (dict): Dictionary to track the status of the elevator (standing, moving, doors open).
-    - __time_task (float): Time required for the current task (movement between floors).
-    - __start_time (float): Time when the current task started.
-    - __image_rect (pygame.Rect): Rectangle defining the position and size of the elevator's image on the screen.
-    - __image (pygame.Surface): Image of the elevator.
-    - __time_left (float): Remaining time for the current task.
-    - __time_tasks (float): Total time spent on all tasks.
-    """
-
-    def __init__(self, num) -> None:
+    def __init__(self, building, elevator_id, x_position):
         """
-        Initializes an elevator with its identifier number and default attributes.
+        Initialize a new elevator
 
         Args:
-        - num (int): Identifier number of the elevator.
+            building: Reference to the building object the elevator belongs to
+            elevator_id: Unique identifier for the elevator
+            x_position: X-axis position of the elevator
         """
-        self.__num = num
-        self.__current_floor = 0
-        self.__tasks_queue = deque([])
-        self.__ele_status = {"standing": True,
-                            "moving": False, "doors open": False}
-        self.__time_task = None
-        self.__start_time = None
-        self.__image = pygame.image.load(data["elevator_image"])
-        self.__image = pygame.transform.scale(
-            self.__image, (data["elevator_width"], data["elevator_height"]))
-        self.__image_rect = self.__image.get_rect()
-        self.__time_left = None
-        self.__time_tasks = 0
+        self.building = building
+        self.id = elevator_id
+        self.x = x_position
 
+        # Load elevator image
+        self.image = pygame.image.load(CONFIG["elevator"]["image_path"])
+        self.image = pygame.transform.scale(self.image, (CONFIG["elevator"]["width"], CONFIG["elevator"]["height"]))
 
-    def get_image(self):
+        # Load arrival sound
+        self.ding_sound = pygame.mixer.Sound(CONFIG["sound"]["ding_path"])
+
+        # Elevator attributes
+        self.width = CONFIG["elevator"]["width"]
+        self.height = CONFIG["elevator"]["height"]
+        self.speed = CONFIG["elevator"]["speed"]
+        self.door_open_time = CONFIG["elevator"]["door_open_time"]
+
+        # Elevator state
+        self.current_floor = 0
+        self.target_floor = None
+        self.y = self.calculate_y_position(self.current_floor)
+        self.movement_start_time = None
+        self.door_open_time_start = None
+        self.is_moving = False
+        self.is_door_open = False
+        self.calls_queue = []
+
+    def calculate_y_position(self, floor):
+        """Calculate the Y position of the elevator based on the floor"""
+        floor_height = CONFIG["floor"]["height"]
+
+        # Position is at the bottom of the building minus the elevator height plus the offset to the desired floor
+        building_height = self.building.max_floors * floor_height
+        return building_height - floor_height * (floor + 1) + (floor_height - self.height) / 2
+
+    def add_call(self, floor):
         """
-        Returns the image of the elevator.
-
-        Returns:
-        - pygame.Surface: Image of the elevator.
-        """
-        return self.__image
-
-    def get_image_rect(self):
-        """
-        Returns the rectangle defining the position and size of the elevator's image.
-
-        Returns:
-        - pygame.Rect: Rectangle defining the position and size of the elevator's image.
-        """
-        return self.__image_rect
-
-    def get_num(self):
-        """
-        Returns the identifier number of the elevator.
-
-        Returns:
-        - int: Identifier number of the elevator.
-        """
-        return self.__num
-
-    def get_ele_status(self, key):
-        """
-        Returns the value of a specific status key from the elevator's status dictionary.
+        Add a call to the elevator
 
         Args:
-        - key (str): Key of the status to retrieve.
+            floor: The floor the elevator was called to
 
         Returns:
-        - bool: Value of the specified status key.
+            Estimated arrival time
         """
-        return self.__ele_status[key]
+        # If elevator is available and not currently moving
+        if not self.is_moving and self.target_floor is None:
+            self.target_floor = floor
+            self.is_moving = True
+            self.movement_start_time = time.time()
+            return self.calculate_estimated_time(self.current_floor, floor)
 
-    def set_ele_status(self, key, value):
+        # If the elevator was already called to this floor, no need to add it again
+        if floor in self.calls_queue or floor == self.target_floor:
+            return self.get_estimated_arrival_time(floor)
+
+        # Add the call to the queue
+        self.calls_queue.append(floor)
+        return self.get_estimated_arrival_time(floor)
+
+    def calculate_estimated_time(self, from_floor, to_floor):
+        """Calculate estimated travel time between floors"""
+        floor_diff = abs(to_floor - from_floor)
+        return floor_diff * self.speed + self.door_open_time
+
+    def get_estimated_arrival_time(self, floor):
+        """Calculate estimated arrival time to a specific floor"""
+        current_time = time.time()
+
+        # Remaining time to reach current target
+        remaining_time = 0
+        current_pos = self.current_floor
+
+        if self.is_moving:
+            # Time remaining to reach current target
+            time_to_target = self.calculate_estimated_time(self.current_floor, self.target_floor)
+            elapsed_time = current_time - self.movement_start_time
+            remaining_time += max(0, time_to_target - elapsed_time)
+            current_pos = self.target_floor
+            
+        if self.is_door_open:
+            time_to_target = self.calculate_estimated_time(self.current_floor, self.target_floor) - self.door_open_time + self.door_open_time_start
+            elapsed_time = current_time - self.movement_start_time
+            remaining_time += max(0, time_to_target - elapsed_time)
+            current_pos = self.target_floor
+
+        # If requested floor is the current target
+        if self.target_floor == floor:
+            remaining_time += self.door_open_time
+            return remaining_time
+        
+        # For each stop in the queue, calculate travel and stop time
+        for f in self.calls_queue:
+            travel_time = self.calculate_estimated_time(current_pos, f)
+            remaining_time += travel_time
+            if f == floor:
+                return remaining_time
+            current_pos = f
+
+        # If the floor is not in the queue, it will be added at the end
+        remaining_time += self.calculate_estimated_time(current_pos, floor) + self.door_open_time
+        return remaining_time
+    
+    def arrived(self, target_y):
+        self.y = target_y
+        self.current_floor = self.target_floor
+        self.is_moving = False
+        self.is_door_open = True
+        self.door_open_time_start = 0
+
+        if self.ding_sound:
+            self.ding_sound.play()
+
+        self.building.elevator_arrived(self.id, self.current_floor)
+
+    def update(self, dt):
         """
-        Sets the value of a specific status key in the elevator's status dictionary.
+        Update the elevator's state
 
         Args:
-        - key (str): Key of the status to set.
-        - value (bool): Value to set for the specified status key.
+            dt: Time elapsed since last update (in seconds)
         """
-        self.__ele_status[key] = value
+        # Check if the elevator is stopped with doors open
+        if self.is_door_open:
+            self.door_open_time_start += dt
+            if self.door_open_time_start >= self.door_open_time:
+                # Close the doors and set a new target if available
+                self.is_door_open = False
+                self.door_open_time_start = 0
 
-    def ding(self):
-        """
-        Plays a ding sound to indicate the elevator has reached a floor.
-        """
-        sound_file = data["ding_sound"]
-        pygame.mixer.music.load(sound_file)
-        pygame.mixer.music.play()
-
-    def insert_task(self, task):
-        """
-        Inserts a new task (floor destination) into the elevator's task queue.
-
-        Args:
-        - task (tuple): Tuple containing (elevator center, floor number) to be added to the task queue.
-        """
-        if not self.__tasks_queue:
-            self.__time_tasks += abs(task[1] - self.__current_floor) * 0.5 + 2
-        else:
-            self.__time_tasks += abs(task[1] - self.__tasks_queue[-1][1]) * 0.5 + 2
-        self.__tasks_queue.append(task)
-
-    def pop_task(self):
-        """
-        Removes and returns the next task (floor destination) from the elevator's task queue.
-
-        Returns:
-        - tuple: Tuple containing (elevator center, floor number) of the next task.
-        """
-        self.__time_tasks -= abs(self.__current_floor - self.__tasks_queue[0][1]) * 0.5 + 2
-        self.__time_task = abs(self.__current_floor - self.__tasks_queue[0][1]) * 0.5
-        self.__current_floor = self.__tasks_queue[0][1]
-        self.__ele_status["standing"] = False
-        self.__start_time = time.monotonic_ns()
-        return self.__tasks_queue.popleft()
-
-    def tasks_time(self, floor):
-        """
-        Calculates the time required for the elevator to reach a specific floor.
-
-        Args:
-        - floor (int): Floor number to calculate the time to reach.
-
-        Returns:
-        - float: Time in seconds required for the elevator to reach the specified floor.
-        """
-        if self.__ele_status["standing"]:
-            return abs(self.__current_floor - floor) * 0.5
-        if not self.__tasks_queue:
-            if self.__ele_status["doors open"]:
-                return abs(self.__current_floor - floor) * 0.5 + 2 - (time.monotonic_ns() - self.__ele_status["doors open"])/10**9 + self.__time_left
-            else:
-                return abs(self.__current_floor - floor) * 0.5 + 2 + self.__time_left
-        else:
-            if self.__ele_status["doors open"]:
-                return abs(self.__tasks_queue[-1][1] - floor) * 0.5 + 2 - (time.monotonic_ns() - self.__ele_status["doors open"])/10**9 + self.__time_tasks + self.__time_left
-            else:
-                return abs(self.__tasks_queue[-1][1] - floor) * 0.5 + 2 + self.__time_tasks + self.__time_left
-
-    def move(self):
-        """
-        Moves the elevator based on its current tasks and status.
-        """
-        if self.__ele_status["standing"] and self.__tasks_queue:
-            self.__ele_status["moving"] = self.pop_task()
-        if self.__ele_status["moving"]:
-            correct_time = time.monotonic_ns()
-            time_passed = (correct_time - self.__start_time)/ 10**9
-            self.__time_left = self.__time_task - time_passed
-            if self.__ele_status["moving"][0] != self.__image_rect.centery:
-                if self.__image_rect.centery - self.__ele_status["moving"][0] > 0:
-                    self.__image_rect.centery = self.__ele_status["moving"][0] + (
-                        self.__time_left * data["floor_height"] * 2)
+                if self.calls_queue:
+                    # Take the next target from the queue
+                    self.target_floor = self.calls_queue.pop(0)
+                    self.is_moving = True
                 else:
-                    self.__image_rect.centery = self.__ele_status["moving"][0] - (
-                        self.__time_left * data["floor_height"] * 2)
-            if self.__ele_status["moving"][0] - 2 <= self.__image_rect.centery <= self.__ele_status["moving"][0] + 2:
-                self.ding()
-                self.__ele_status["moving"] = False
-                self.__ele_status["doors open"] = time.monotonic_ns()
+                    self.target_floor = None
+            return
 
-    def draw_ele(self, screen, width, height, x_offset=0):
-        image_elevator = data["elevator_image"]
-        img = pygame.image.load(image_elevator)
-        self.__image = pygame.transform.scale(
-            img, (data["elevator_width"], data["elevator_height"]))
-        self.__image_rect = self.__image.get_rect()
-        print("hi " , self.get_image_rect())
-        self.__image_rect.topleft = (width + x_offset, height)
-        screen.blit(self.__image, self.__image_rect)
+        # If the elevator is not moving, no update needed
+        if not self.is_moving or self.target_floor is None:
+            return
+
+        target_y = self.calculate_y_position(self.target_floor)
+        direction = 1 if target_y > self.y else -1
+        distance_to_move = CONFIG["floor"]["height"] / self.speed * dt
+        self.y += max(distance_to_move, 1) * direction
+
+        # Check if the elevator reached the target
+        if (direction == 1 and self.y >= target_y) or (direction == -1 and self.y <= target_y):
+            self.arrived(target_y)
+            
+
+    def draw(self, screen):
+        """
+        Draw the elevator on the screen
+
+        Args:
+            screen: The pygame drawing surface
+        """
+        screen.blit(self.image, (self.x, self.y))
